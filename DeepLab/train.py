@@ -20,11 +20,11 @@ from evaluate_w_metrics import evaluate_end_of_epoch
 from data_loading import CarvanaDataset, BasicDataset
 from dice_score import dice_loss, accuracy, precision, sensitivity, specificity, false_positive_rate, false_negative_rate
 
-dir_img_path = os.path.expanduser('path_to_images_to_train')
-dir_mask_path = os.path.expanduser('path_to_masks_to_train')
-dir_checkpoint_path = os.path.expanduser('path_to_checkpoints')
-dir_imgT_path = os.path.expanduser('path_to_validation_images')
-dir_maskT_path = os.path.expanduser('path_to_validation_masks')
+dir_img_path = os.path.expanduser('Data/Train/images')
+dir_mask_path = os.path.expanduser('Data/Train/masks')
+dir_checkpoint_path = os.path.expanduser('checkpoint_path')
+dir_imgT_path = os.path.expanduser('Data/Validation/images')
+dir_maskT_path = os.path.expanduser('Data/Validation/images')
 
 dir_img = Path(dir_img_path)
 dir_mask = Path(dir_mask_path)
