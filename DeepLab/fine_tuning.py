@@ -198,43 +198,35 @@ def train_model(
 
 def save_images_side_by_side(images, true_masks, masks_pred, epoch, save_dir='path_to_save_the_images'):
     images = [TF.to_pil_image(image.cpu().detach().squeeze()) for image in images]
-    true_masks = [apply_color_map(mask.cpu().detach().numpy()) for mask in true_masks]
-    masks_pred = [mask_to_pil(mask.argmax(dim=1)) for mask in masks_pred]
-    save_dir = os.path.expanduser(save_dir) 
+    true_masks_pil = [apply_custom_color(true_mask.cpu().detach().numpy()) for true_mask in true_masks]
+    masks_pred = [apply_custom_color(mask.cpu().detach().numpy()) for mask in masks_pred]
+    save_dir = os.path.expanduser(save_dir)
     os.makedirs(save_dir, exist_ok=True)
-    # Save images side by side
-    batch_size = len(images)
-    for idx in range(batch_size):
+    for idx in range(len(images)):
         combined_image = Image.new('RGB', (images[idx].width * 3, images[idx].height))
         combined_image.paste(images[idx], (0, 0))
-        combined_image.paste(true_masks[idx], (images[idx].width, 0))
+        combined_image.paste(true_masks_pil[idx], (images[idx].width, 0))
         combined_image.paste(masks_pred[idx], (images[idx].width * 2, 0))
         combined_image.save(os.path.join(save_dir, f'epoch_{epoch}_image_{idx}.png'))
     print(f"Images saved to {save_dir}")
 
-def mask_to_pil(mask):
-    if isinstance(mask, torch.Tensor):
-        mask = mask.cpu().detach().squeeze().numpy()
-    if mask.ndim == 2:  #Grayscale mask
-        mask = (mask * 255).astype(np.uint8)
-        return Image.fromarray(mask, mode='L')
-    elif mask.ndim == 3:  #Multi-class mask
-        mask_argmax = np.argmax(mask, axis=0)  #Take the channel with highest value as predicted class
-        mask_max = mask_argmax.max()
-        if mask_max != 0:
-            mask = (mask_argmax * 255 / mask_max).astype(np.uint8)
-        else:
-            mask = (mask_argmax * 255).astype(np.uint8)  #Handle the case where mask_max is 0
-        return Image.fromarray(mask, mode='L')
-    else:
-        raise ValueError("Unsupported mask dimensions. Supported dimensions: 2 (single channel) or 3 (multi-channel)")
 
-def apply_color_map(mask):
-    cmap = cm.get_cmap('jet')  
-    normed_data = mask / mask.max()  #Normalize mask to [0, 1]
-    mapped_data = cmap(normed_data)  #Apply color map
-    mapped_data = (mapped_data[:, :, :3] * 255).astype(np.uint8)  #Convert to RGB
-    return Image.fromarray(mapped_data)
+def apply_custom_color(mask):
+    #Ensure mask is a numpy array
+    if isinstance(mask, torch.Tensor):
+        mask = mask.cpu().detach().numpy()
+    if mask.ndim < 2:
+        raise ValueError(f"Mask dimensions are too low: {mask.shape}. Expected at least 2D.")
+    color_map = {
+        0: (0, 0, 0),       #Background
+        1: (255, 255, 255), #Class 1 - bone
+        2: (128, 128, 128)  #Class 2 - ligament
+    }
+    height, width = mask.shape[-2], mask.shape[-1]
+    color_mapped_image = np.zeros((height, width, 3), dtype=np.uint8)
+    for class_value, color in color_map.items():
+        color_mapped_image[mask == class_value] = color
+    return Image.fromarray(color_mapped_image)
 
 #Mandatory to use the --load in the command line by indicating the directory to the model intended to be fine-tuned.
 def get_args():
