@@ -17,12 +17,10 @@ from evaluate_w_margin import evaluate_per_image, dilate_mask, erode_mask
 from data_loading import CarvanaDataset
 
 #Directories must be replaced
-dir_img_path = os.path.expanduser('path_to_the_test_data_images')
-dir_mask_path = os.path.expanduser('path_to_the_test_data_masks')
-dir_checkpoint_path = os.path.expanduser('path_to_save_checkpoints')
+dir_img_path = os.path.expanduser("Data/Validation/images")
+dir_mask_path = os.path.expanduser("Data/Validation/images")
 dir_img = Path(dir_img_path)
 dir_mask = Path(dir_mask_path)
-dir_checkpoint = Path(dir_checkpoint_path)
 
 def test_model(model, device, batch_size: int = 1, amp: bool = False, img_scale: float = 0.5):
     datasetTest = CarvanaDataset(dir_img, dir_mask, img_scale)
