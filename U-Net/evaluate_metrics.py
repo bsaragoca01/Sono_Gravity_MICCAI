@@ -77,7 +77,7 @@ def evaluate_end_of_epoch(net, dataloader, device, amp, criterion):
     avg_specificity = np.mean(specificities) if specificities else 0
     avg_fpr = np.mean(fprs) if fprs else 0
     avg_fnr = np.mean(fnrs) if fnrs else 0
-    avg_dice_per_class = {class_idx: np.mean(dice_list) for class_idx, dice_list in dices.items()}
+    avg_dice_per_class = {class_idx: np.mean([dice.cpu().numpy() for dice in dice_list]) for class_idx, dice_list in dices.items()}
     avg_loss = np.mean(losses) if losses else 0
 
     return {
