@@ -4,7 +4,7 @@ The present repository contains frameworks to train, evaluate and predict/segmen
 The code presented in this repository was developed and used in the MSc Biomedical Engineering dissertation: "Ultrasound-Guided Lumbar Puncture with AI-Based Image Labelling for Intracranial Pressure Assessment in Spaceflight", which aimed to label Longitudinal Spinal Ultrasound images in real-time to be incorporate in a novel and safer Lumbar Puncture technique to assess the Intracranial Pressure in a microgravity environment onboard the International Space Station.
 This README provides guidance to train and predict a set of data.
 
-## How to train U-Net and DeepLab models with ResNet-50 and ResNet-101 backbones:
+## How to perform the segmentation:
 
 ### Step 1: Upload Dependencies
 - CUDA 11.7 and PyTorch 1.13 or later and compatible versions of both CUDA and Pytorch must be installed;
@@ -102,6 +102,22 @@ In the scripts evaluate_w_margin.py, the millimiters intended to be used to dila
 The predict_w_margin.py must be used if the user want to use this tolerance. 
 
 In the worksheet with the calculated metrics, the files which used eroded or dilated or the original ground-truth masks are discriminated.
+### Step 6 - Fine-Tuning:
+Fine-Tuning with data augmentation can be performed by running the fine_tuning.py script.
+In this, a set of transformations are introduced to the data.
+The following transformations are used in the script. If the user wants to introduce more transformations or modified the present ones, it must do it in this section.
+```bash
+custom_transform = CustomCompose([
+    RandomRotation(degrees=20), #range of left random rotation
+    RandomHorizontalFlip(),
+    ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1), #color adjustments
+    AddGaussianNoiseNumpy(mean=0, std=0.1) #gaussian noise
+])
+```
+To use the Fine-Tuning, the model previously trained and intended to be fine-tuned must be loaded, just like Step 4. Thus, the following command must be used:
+```bash
+python fine_tunning.py --load 'the_path_to_model' --amp
+```
 
 ## Outcome's Example:
 In this Figure, the original Ultrasound image (from a phantom), respective ground-truth mask and prediction by DeepLab+ResNet-50 are depicted.
