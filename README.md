@@ -6,14 +6,19 @@ This README provides guidance to train and predict a set of data.
 
 ## How to train U-Net and DeepLab models with ResNet-50 and ResNet-101 backbones:
 
-### Step 1: Upload Necessary Dependencies
-
-
+### Step 1: Upload Dependencies
+- CUDA 11.7 and PyTorch 1.13 or later and compatible versions of both CUDA and Pytorch must be installed
+- Further dependencies must be installed by running:
+```bash
+pip install torch torchvision tqdm openpyxl numpy Pillow
+```
 ### Step 2: Upload Your Data
 In a folder, create two folders for the images and for its respective Ground-truth masks.
 The image and its respective mask **MUST** have exactly the same file name.
 
-In the training process, additional data must be introduced to the validation phase. Therefore, another folder with the same characteristics as the one mentioned before must be created to introduce the validation data inside
+In the training process, additional data must be introduced to the validation phase. Therefore, another folder with the same characteristics as the one mentioned before must be created to introduce the validation data inside.
+
+Considering that the data used in this study still remains private, the Data folder is empty.
 
 ### Step 3: Frameworks adaptation
 The code is adapted to greyscale data, therefore if the data aimed to be segmented has a 3-color channel, scripts must be modified, specifically in the lines:
@@ -87,7 +92,7 @@ python predict.py --load 'the_path_to_model' --amp
 ```
 is the format that must be used.
 
-### Step 4 - Prediction with margin:
+### Step 5 - Prediction with margin:
 Considering the nature of the images used in this research, which are characterized by poor spatial resolution, a tolerance system was applied in the metrics calculation.
 In this sense, a tolerance chose by the user creates a dilated and eroded mask on top of the ground-truth mask. The metrics are calculated with the mask which showed better Dice coefficient for the specific file. 
 In the scripts evaluate_w_margin.py, the millimiters intended to be used to dilate and erode masks must specified. It also be specified the number of pixels per millimiter.
@@ -97,8 +102,9 @@ The predict_w_margin.py must be used if the user want to use this tolerance.
 In the worksheet with the calculated metrics, the files which used eroded or dilated or the original ground-truth masks are discriminated.
 
 ## Outcome's Example:
+In this Figure, the original Ultrasound image (from a phantom), respective ground-truth mask and prediction by DeepLab+ResNet-50 are depicted.
 
-
+![Example of a DeepLab with ResNet-50 prediction](example_prediction.png)
 
 
 ## References:
