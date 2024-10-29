@@ -16,8 +16,8 @@ import torchvision.transforms.functional as TF
 import time
 
 #Directory paths
-dir_img_path = os.path.expanduser('path_to_the_test_data_images')
-dir_mask_path = os.path.expanduser('path_to_the_test_data_masks')
+dir_img_path = os.path.expanduser("Data/Validation/images")
+dir_mask_path = os.path.expanduser("Data/Validation/images")
 dir_img = Path(dir_img_path)
 dir_mask = Path(dir_mask_path)
 
