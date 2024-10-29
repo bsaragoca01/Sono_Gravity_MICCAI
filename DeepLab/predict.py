@@ -72,10 +72,11 @@ def test_model(
     os.makedirs(save_dir, exist_ok=True)
     wb.save(os.path.join(save_dir, 'training_metrics_final.xlsx'))
 
+
 def save_images_side_by_side(images, true_masks, masks_pred, img, save_dir='path_to_save_the_images'):
     images = [TF.to_pil_image(image.cpu().detach().squeeze()) for image in images]
     true_masks_pil = [mask_color(true_mask.cpu().detach().numpy()) for true_mask in true_masks]
-    masks_pred = [mask_color(mask.cpu().detach().numpy(), true_masks[idx].cpu().detach().numpy()) for idx, mask in enumerate(masks_pred)]
+    masks_pred = [mask_color(mask.cpu().detach().numpy()) for idx, mask in enumerate(masks_pred)]
     save_dir = os.path.expanduser(save_dir)
     os.makedirs(save_dir, exist_ok=True)
     for idx in range(len(images)):
@@ -87,7 +88,7 @@ def save_images_side_by_side(images, true_masks, masks_pred, img, save_dir='path
     print(f"Images saved to {save_dir}")
 
 
-def mask_color(pred_mask, true_mask):
+def mask_color(pred_mask):
     color_map = {
         0: (0,0,0),
         1: (255,255,255),
@@ -98,6 +99,7 @@ def mask_color(pred_mask, true_mask):
     for class_value, color in color_map.items():
         color_mapped_image[pred_mask == class_value] = color
     return Image.fromarray(color_mapped_image)
+
 
 def get_args():
     parser = argparse.ArgumentParser(description='Test the Deeplab model on images and target masks')
