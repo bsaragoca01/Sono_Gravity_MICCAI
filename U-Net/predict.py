@@ -59,7 +59,6 @@ def save_images_side_by_side(images, true_masks, masks_pred, img_name, save_dir=
             f"Dimension mismatch: Image ({img_width}, {img_height}) vs True Mask ({true_mask_width}, {true_mask_height})"
         assert (img_width, img_height) == (pred_mask_width, pred_mask_height), \
             f"Dimension mismatch: Image ({img_width}, {img_height}) vs Pred Mask ({pred_mask_width}, {pred_mask_height})"
-
         
         combined_image = Image.new('RGB', (img_width * 3, img_height))
         combined_image.paste(images[idx], (0, 0)) #original image
