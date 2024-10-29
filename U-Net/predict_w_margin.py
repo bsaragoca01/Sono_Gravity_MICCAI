@@ -20,10 +20,8 @@ from data_loading import CarvanaDataset
 
 dir_img_path = os.path.expanduser("images_path")
 dir_mask_path = os.path.expanduser("masks_path")
-dir_checkpoint_path = os.path.expanduser("checkpoint_path")
 dir_img = Path(dir_img_path)
 dir_mask = Path(dir_mask_path)
-dir_checkpoint = Path(dir_checkpoint_path)
 
 def mask_color(pred_mask):
     #Define the color map for the classes
