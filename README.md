@@ -1,24 +1,26 @@
 # SonoGravity
 
 The present repository contain frameworks to train, evaluate and predict/segment grayscale images using U-Net and DeepLabV3 Convolutional Neural Networks (CNNs).
-The code presented in this repository was developed and used in the MSc Biomedical Engineering dissertation: "Ultrasound-Guided Lumbar Puncture with AI-Based Image Labelling for Intracranial Pressure Assessment in Spaceflight", which aimed to label Longitudinal Spinal Ultrasound images to be incorporate in a novel and safer Lumbar Puncture technique to assess the Intracranial Pressure in a microgravity environment onboard of the International Space Station.
+The code presented in this repository was developed and used in the MSc Biomedical Engineering dissertation: "Ultrasound-Guided Lumbar Puncture with AI-Based Image Labelling for Intracranial Pressure Assessment in Spaceflight", which aimed to label Longitudinal Spinal Ultrasound images in real-time to be incorporate in a novel and safer Lumbar Puncture technique to assess the Intracranial Pressure in a microgravity environment onboard the International Space Station.
 This README provides guidance to train and predict a set of data.
 
 ## How to train U-Net and DeepLab models with ResNet-50 and ResNet-101 backbones:
 
 ### Step 1: Upload Dependencies
-- CUDA 11.7 and PyTorch 1.13 or later and compatible versions of both CUDA and Pytorch must be installed
-- Further dependencies must be installed by running:
+- CUDA 11.7 and PyTorch 1.13 or later and compatible versions of both CUDA and Pytorch must be installed;
+- Further dependencies must be installed by running the following comand line:
 ```bash
 pip install torch torchvision tqdm openpyxl numpy Pillow
 ```
 ### Step 2: Upload Your Data
-In a folder, create two folders for the images and for its respective Ground-truth masks.
+Create a folder. Inside that folder, create two more folders for the images and for its respective Ground-truth masks.
 The image and its respective mask **MUST** have exactly the same file name.
 
 In the training process, additional data must be introduced to the validation phase. Therefore, another folder with the same characteristics as the one mentioned before must be created to introduce the validation data inside.
 
-Considering that the data used in this study still remains private, the Data folder is empty.
+Considering that data from a Phantom and Human volunteers were used in this study, only the phantom data is available in the Data folder. The ultrasound files and respective ground-truth masks are represented in a .pth file. It was considered a total of 14 subjects for the phantom images. Although only one phantom model was used, 14 subjects were considered to the frames which were collected in different days, by different operators and in different angles and probe's positions.
+
+The choice of Training and Validation data was made as a 80%/20% distribution, regarding the "subjects". Therefore, the data from the same subject is not in the Training and Validation simultaneously.
 
 ### Step 3: Frameworks adaptation
 The code is adapted to greyscale data, therefore if the data aimed to be segmented has a 3-color channel, scripts must be modified, specifically in the lines:
