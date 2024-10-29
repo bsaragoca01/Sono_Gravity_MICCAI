@@ -197,6 +197,7 @@ def save_images_side_by_side(images, true_masks, masks_pred, epoch, save_dir='pa
 
     print(f"Images saved to {save_dir}")
 
+#The colors used are relative to 3 different classes. Both colors and classes must be changed if the user desires or if a different number of classes is used
 def apply_color_map(mask):
     color_map = {
         0: (0, 0, 0),       #Class 0: Black
