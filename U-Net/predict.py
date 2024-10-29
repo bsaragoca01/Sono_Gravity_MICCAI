@@ -20,10 +20,8 @@ from data_loading import CarvanaDataset
 
 dir_img_path = os.path.expanduser("images_path")
 dir_mask_path = os.path.expanduser("masks_path")
-dir_checkpoint_path = os.path.expanduser("checkpoint_path")
 dir_img = Path(dir_img_path)
 dir_mask = Path(dir_mask_path)
-dir_checkpoint = Path(dir_checkpoint_path)
 
 
 def mask_color(pred_mask):
@@ -116,7 +114,7 @@ def test_model(model, device, batch_size: int = 1, amp: bool = False, img_scale:
                     metrics["fnr"],
                     prediction_time,
                 ]
-
+                ws.append(row)
                 progress_bar.update(1)
 
     save_dir = os.path.expanduser('path_to_save_the_worksheet_with_the_metrics')
