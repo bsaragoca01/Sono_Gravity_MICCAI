@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:web_socket_channel/io.dart'; // Import WebSocket package
+import 'package:web_socket_channel/io.dart'; 
 
 void main() {
   runApp(MyApp());
@@ -12,34 +12,27 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-//localhost is common but:
-//If the emulator is used: 10.0.2.2 instead of localhost
-
 class _MyAppState extends State<MyApp> {
   late IOWebSocketChannel channel;
   late IOWebSocketChannel model_channel;
   Uint8List? imageBytes;
   Uint8List? predictedBytes;
-  Uint8List? lastPredictionBytes; // Store the last prediction
-  bool isFirstPrediction = true; // Track if this is the first prediction
-  bool isConnected = false; // Track WebSocket connection status
+  Uint8List? lastPredictionBytes; 
+  bool isFirstPrediction = true; 
+  bool isConnected = false;
   bool isPredicting = false;
   bool discardInitialFrames = true;
-  int? sendTime; // Variable to hold the time when the image is sent
+  int? sendTime;
 
   @override
   void initState() {
     super.initState();
-
-    channel = IOWebSocketChannel.connect('ws://localhost:8080');
-    model_channel = IOWebSocketChannel.connect('ws://100.68.9.113:12345');
-
-    //model_channel = IOWebSocketChannel.connect('ws://localhost:12345');
-
+    channel = IOWebSocketChannel.connect('ws://path_to_the_server'); //server which is displaying the Ultrasound frames in real-time
+    model_channel = IOWebSocketChannel.connect('ws://path_to_server_predictions'); //server which is responsible to apply the DL models trained previously
     channel.stream.listen((data) {
       if (isConnected) {
         imageBytes = Uint8List.fromList(data);
-        if (!discardInitialFrames && !isPredicting) {
+        if (!discardInitialFrames && !isPredicting) { //The frames before the Websocket handshake are discarded, so they are not accumulated turning the approach not in real-time 
           predict(imageBytes!);
         }
       }
@@ -50,20 +43,20 @@ class _MyAppState extends State<MyApp> {
       print("Error in image channel: $error");
     });
 
-    // Listen for the prediction result from the model WebSocket
+    //Listen for the prediction result 
     model_channel.stream.listen((prediction) {
       final receiveTime = DateTime
           .now()
-          .millisecondsSinceEpoch; // Capture receive time
+          .millisecondsSinceEpoch; //Capture the receive time
       if (sendTime != null) {
-        final delay = receiveTime - sendTime!; // Calculate delay
+        final delay = receiveTime - sendTime!; //Calculate delay, the time between sending the frame and getting its prediction back
         print("Received prediction at $receiveTime ms, delay: $delay ms");
       }
       setState(() {
         lastPredictionBytes = predictedBytes;
         predictedBytes = Uint8List.fromList(prediction);
         isFirstPrediction = false;
-        isPredicting = false; // Mark prediction as done
+        isPredicting = false; //Mark prediction as done
       });
     }, onDone:(){
       print("Model channel closed");
@@ -78,13 +71,13 @@ class _MyAppState extends State<MyApp> {
 
   void predict(Uint8List image) {
     isPredicting= true;
-    sendTime = DateTime.now().millisecondsSinceEpoch; // Capture send time
+    sendTime = DateTime.now().millisecondsSinceEpoch; //Capture send time
     model_channel.sink.add(image);
     print("Image sent at $sendTime ms");
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { //Page design
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -93,16 +86,16 @@ class _MyAppState extends State<MyApp> {
           ),
           backgroundColor: Color(0xFFbacae7),
         ),
-        backgroundColor: Color(0xFFbacae7), // Set the background color to black
+        backgroundColor: Color(0xFFbacae7), 
         body: Center(
           child: isFirstPrediction
               ? Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SpinKitFadingFour(
-                color: Colors.white, // Specify the color for the spinner
+                color: Colors.white,
               ),
-              SizedBox(height: 20), // Space between indicator and text
+              SizedBox(height: 20),
               Text('Loading',
               style: TextStyle(color:Colors.white,
                   fontWeight: FontWeight.bold
@@ -112,21 +105,21 @@ class _MyAppState extends State<MyApp> {
           ) : Stack(
             alignment: Alignment.center,
             children: [
-              // Display the last prediction, if available
+              //Display the previous prediction while the new one is being processed to avoid visual cuts between frames
+              //Smoother transition but does not affect the time between changing predictions.
               if (lastPredictionBytes != null)
                 AnimatedOpacity(
-                  opacity: (isPredicting) ? 0.0 : 1.0, // Fade out if predicting
+                  opacity: (isPredicting) ? 0.0 : 1.0,
                   duration: Duration(milliseconds: 400),
                   child: Image.memory(lastPredictionBytes!),
                 ),
-              // Display the new prediction only when ready
+              //Display the new prediction only when ready
               if (predictedBytes != null)
                 AnimatedOpacity(
-                  opacity: (isPredicting) ? 0.0 : 1.0, // Fade out if predicting
+                  opacity: (isPredicting) ? 0.0 : 1.0, 
                   duration: Duration(milliseconds: 400),
                   child: Image.memory(predictedBytes!),
                 ),
-              // Loading indicator
             ],
           ),
         ),
@@ -141,4 +134,3 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 }
-
