@@ -24,46 +24,6 @@ dir_img = Path(dir_img_path)
 dir_mask = Path(dir_mask_path)
 dir_checkpoint = Path(dir_checkpoint_path)
 
-def mask_color(pred_mask):
-    color_map = {
-        0: (0, 0, 0),      #Class 0 (background)
-        1: (255, 255, 255), #Class 1 (Bone)
-        2: (128, 128, 128)  #Class 2 (Ligament)
-    }
-
-    height, width = pred_mask.shape[-2], pred_mask.shape[-1]
-    color_mapped_image = np.zeros((height, width, 3), dtype=np.uint8)
-
-    for class_value, color in color_map.items():
-        color_mapped_image[pred_mask == class_value] = color
-
-    return Image.fromarray(color_mapped_image)
-
-
-def save_images_side_by_side(images, true_masks, dilated_masks, eroded_masks, masks_pred, img_name, save_dir=''):
-    save_dir = os.path.expanduser(save_dir)
-    os.makedirs(save_dir, exist_ok=True)
-    #Convert tensors to PIL images only after processing
-    images = [TF.to_pil_image(image.cpu().detach().squeeze()) for image in images]
-    true_masks_np = [mask_color(mask.cpu().detach().numpy().astype(np.uint8)) for mask in true_masks]
-    dilated_masks_np = [mask_color(mask.cpu().detach().numpy().astype(np.uint8)) for mask in dilated_masks]
-    eroded_masks_np = [mask_color(mask.cpu().detach().numpy().astype(np.uint8)) for mask in eroded_masks]
-    masks_pred_np = [mask_color(mask.cpu().detach().numpy()) for mask in masks_pred]
-    for idx in range(len(images)):
-        img_width, img_height = images[idx].size
-        combined_image = Image.new('RGB', (img_width * 5, img_height))
-        combined_image.paste(images[idx], (0, 0)) #original image
-        combined_image.paste(true_masks_np[idx], (img_width, 0)) #ground-truth mask
-        combined_image.paste(dilated_masks_np[idx], (img_width * 2, 0)) #ground-truth mask dilated
-        combined_image.paste(eroded_masks_np[idx], (img_width * 3, 0)) #ground-truth mask eroded
-        combined_image.paste(masks_pred_np[idx], (img_width * 4, 0)) #predicted mask
-
-        file_name = f'image_{img_name}_{idx}.png'
-        combined_image.save(os.path.join(save_dir, file_name))
-
-    print(f"Images saved to {save_dir}")
-
-
 def test_model(model, device, batch_size: int = 1, amp: bool = False, img_scale: float = 0.5):
     datasetTest = CarvanaDataset(dir_img, dir_mask, img_scale)
     loader_args = dict(batch_size=batch_size, num_workers=os.cpu_count(), pin_memory=False)
@@ -117,6 +77,41 @@ def test_model(model, device, batch_size: int = 1, amp: bool = False, img_scale:
     save_dir = os.path.expanduser('path_to_save_the_worksheet')
     os.makedirs(save_dir, exist_ok=True)
     wb.save(os.path.join(save_dir, 'training_metrics_final.xlsx'))
+
+def save_images_side_by_side(images, true_masks, dilated_masks, eroded_masks, masks_pred, img_name, save_dir='path_to_save_predictions'):
+    save_dir = os.path.expanduser(save_dir)
+    os.makedirs(save_dir, exist_ok=True)
+    #Convert tensors to PIL images only after processing
+    images = [TF.to_pil_image(image.cpu().detach().squeeze()) for image in images]
+    true_masks_np = [mask_color(mask.cpu().detach().numpy().astype(np.uint8)) for mask in true_masks]
+    dilated_masks_np = [mask_color(mask.cpu().detach().numpy().astype(np.uint8)) for mask in dilated_masks]
+    eroded_masks_np = [mask_color(mask.cpu().detach().numpy().astype(np.uint8)) for mask in eroded_masks]
+    masks_pred_np = [mask_color(mask.cpu().detach().numpy()) for mask in masks_pred]
+    for idx in range(len(images)):
+        img_width, img_height = images[idx].size
+        combined_image = Image.new('RGB', (img_width * 5, img_height))
+        combined_image.paste(images[idx], (0, 0)) #original image
+        combined_image.paste(true_masks_np[idx], (img_width, 0)) #ground-truth mask
+        combined_image.paste(dilated_masks_np[idx], (img_width * 2, 0)) #ground-truth mask dilated
+        combined_image.paste(eroded_masks_np[idx], (img_width * 3, 0)) #ground-truth mask eroded
+        combined_image.paste(masks_pred_np[idx], (img_width * 4, 0)) #predicted mask
+
+        file_name = f'image_{img_name}_{idx}.png'
+        combined_image.save(os.path.join(save_dir, file_name))
+
+    print(f"Images saved to {save_dir}")
+
+
+def mask_color(pred_mask):
+    color_map = {
+        0: (0, 0, 0),      #Class 0 (background)
+        1: (255, 255, 255), #Class 1 (Bone)
+        2: (128, 128, 128)  #Class 2 (Ligament)
+    }
+    height, width = pred_mask.shape[-2], pred_mask.shape[-1]                                                                         color_mapped_image = np.zeros((height, width, 3), dtype=np.uint8)
+    for class_value, color in color_map.items():
+        color_mapped_image[pred_mask == class_value] = color
+    return Image.fromarray(color_mapped_image)
 
 def get_args():
     parser = argparse.ArgumentParser(description='Test the Deeplab model on images and target masks')
