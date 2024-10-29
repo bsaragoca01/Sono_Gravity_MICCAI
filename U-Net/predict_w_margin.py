@@ -18,8 +18,8 @@ from data_loading import CarvanaDataset
 #Directory paths
 #Images, intended to be predicted by U-Net, and respective ground-truth masks directories must be introduced
 
-dir_img_path = os.path.expanduser("images_path")
-dir_mask_path = os.path.expanduser("masks_path")
+dir_img_path = os.path.expanduser("Data/Validation/images")
+dir_mask_path = os.path.expanduser("Data/Validation/images")
 dir_img = Path(dir_img_path)
 dir_mask = Path(dir_mask_path)
 
