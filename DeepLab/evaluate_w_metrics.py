@@ -46,8 +46,8 @@ def evaluate_end_of_epoch(net, dataloader, device, amp, n_classes, criterion):
             else:
                 mask_true_one_hot = F.one_hot(mask_true, n_classes).permute(0, 3, 1, 2).float()
                 mask_pred_one_hot = F.one_hot(mask_pred.argmax(dim=1), n_classes).permute(0, 3, 1, 2).float()
-                dice_score = multiclass_dice_coeff(mask_pred_one_hot, mask_true_one_hot, reduce_batch_first=False)
-                dice_scores.append(dice_score.item())
+                dice_score = multiclass_dice_coeff(mask_pred_one_hot, mask_true_one_hot)
+                dice_scores.append(dice_score)
                 accuracy = (mask_pred.argmax(dim=1) == mask_true).float().mean()
                 accuracies.append(accuracy.item())
                 precision_score = precision(mask_pred_one_hot, mask_true_one_hot, reduce_batch_first=False)
@@ -109,7 +109,7 @@ def evaluate_per_image(net, image, mask_true, device, amp, n_classes):
 
         if n_classes == 1:
             mask_pred = (mask_pred > 0.5).float()
-            dice_score = dice_coeff(mask_pred, mask_true, reduce_batch_first=False)
+            dice_score = dice_coeff(mask_pred, mask_true)
             dice_scores.append(dice_score)
             accuracy = (mask_pred == mask_true).float().mean()
             accuracies.append(accuracy.item())
@@ -127,7 +127,7 @@ def evaluate_per_image(net, image, mask_true, device, amp, n_classes):
         else:
             mask_true_one_hot = F.one_hot(mask_true, n_classes).permute(0, 3, 1, 2).float()
             mask_pred_one_hot = F.one_hot(mask_pred.argmax(dim=1), n_classes).permute(0, 3, 1, 2).float()
-            dice_score = multiclass_dice_coeff(mask_pred_one_hot, mask_true_one_hot, reduce_batch_first=False)
+            dice_score = multiclass_dice_coeff(mask_pred_one_hot, mask_true_one_hot)
             dice_scores.append(dice_score)
             accuracy = (mask_pred.argmax(dim=1) == mask_true).float().mean()
             accuracies.append(accuracy.item())
