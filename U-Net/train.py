@@ -20,14 +20,15 @@ from evaluate_metrics import evaluate_end_of_epoch
 from unet import UNet
 from data_loading import CarvanaDataset
 
-#The user must introduce the path to both images and masks for train and validation of the model. 
+#The user must introduce the path to both images and masks for train and validation of the model.
+#The directories below correspond to the Phantom images available.
 #Also, a path to the model's saving must be introduced. This saves checkpoints which contain the model's weigths update.
 
-dir_img_path = os.path.expanduser('images_path')
-dir_mask_path = os.path.expanduser('masks_path')
+dir_img_path = os.path.expanduser('Data/Train/images')
+dir_mask_path = os.path.expanduser('Data/Train/masks')
 dir_checkpoint_path = os.path.expanduser('checkpoint_path')
-dir_imgT_path = os.path.expanduser('validation_images')
-dir_maskT_path = os.path.expanduser('validation_masks')
+dir_imgT_path = os.path.expanduser('Data/Validation/images')
+dir_maskT_path = os.path.expanduser('Data/Validation/images')
 
 dir_img = Path(dir_img_path)
 dir_mask = Path(dir_mask_path)
