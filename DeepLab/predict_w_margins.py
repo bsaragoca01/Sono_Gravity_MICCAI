@@ -133,7 +133,7 @@ if __name__ == '__main__':
     #If it is intended to use DeepLab with ResNet-101 backbone, use the command:
     #model=segmentation.deeplabv3_resnet101(pretrained=False) 
     model.backbone.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False) #Modification in the first layer of model's architecture to allow the input of 1-color channel data
-    model.classifier[4] = nn.Conv2d(256, args.n_classes, kernel_size=(1, 1), stride=(1, 1))
+    model.classifier[4] = nn.Conv2d(256, args.classes, kernel_size=(1, 1), stride=(1, 1))
     #Set the n_classes attribute
     model.n_classes = args.classes
     model.to(memory_format=torch.channels_last)
