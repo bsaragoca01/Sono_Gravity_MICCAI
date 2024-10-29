@@ -52,6 +52,7 @@ Both scripts train.py inside U-Net and DeepLab folders must be used in the train
 Scripts have comments to guide some of the steps mentioned in this guide.
 
 The directories with the files must be introduced in the train.py scripts. Also, a directories to save the checkpoint, the worksheet with the validation metrics calculated per epoch, and the predicted images must also be introduced.
+The colors used on both the ground-truth and the predicted masks are defined in the train.py as well as on the prediction scripts. It was defined three colors for the three classes used. However, both colors and classes must be changed if the user desires or if a different number of classes will be used.
 The checkpoints saved during the training are .pth files, which contain the models' weight updates. They are saved per 5 epoch, but this can be altered in the script.
 
 If it is intended to be used DeepLab with ResNet-101 instead of ResNet-50 backbone, the code line:
@@ -62,7 +63,6 @@ must be replaced by:
 ```bash
 model=segmentation.deeplabv3_resnet101(pretrained=False) 
 ```
-
 Parameters as batch size, L2 regularization, learning rate, optimizer type, number of epochs, number of classes intended to predict can be changed in the script.
 However, the batch size, number of epochs and classes can be defined in the command line as well.
 
