@@ -23,13 +23,18 @@ def erode_mask(mask, pixels_per_mm=3.78, erosion_mm=1.5):
 @torch.inference_mode()
 def evaluate_per_image(net, image, mask_true, device, amp=False, apply_margin=True):
     net.eval()
-    image = image.to(device=device, dtype=torch.float32, memory_format=torch.channels_last)
-    mask_true = mask_true.to(device=device, dtype=torch.long)
+    dice_scores = []
+    accuracies = []
+    precisions = []
+    sensitivities = []
+    specificities = []
+    fprs = []
+    fnrs = []
     dice_scores_classes = {class_idx: [] for class_idx in range(0, net.n_classes)}
     count_eroded_dice = 0
     count_dilated_dice = 0
     count_normal_dice = 0
-
+    losses=[]
     with torch.autocast(device.type if device.type != 'mps' else 'cpu', enabled=amp):
         mask_pred = net(image)
         # Generate the dilated and eroded masks
