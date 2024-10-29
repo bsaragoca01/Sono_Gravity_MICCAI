@@ -181,7 +181,7 @@ def save_images_side_by_side(images, true_masks, masks_pred, epoch, save_dir='pa
     #Convert true masks to PIL format with custom color mapping
     true_masks = [apply_color_map(mask.cpu().detach().numpy()) for mask in true_masks]
     #Convert predicted masks to PIL format
-    masks_pred = [mask_to_pil(mask.argmax(dim=0).cpu().detach().numpy()) for mask in masks_pred]
+    masks_pred = [apply_color_map(mask.argmax(dim=0).cpu().detach().numpy()) for mask in masks_pred]
 
     save_dir = os.path.expanduser(save_dir) 
     os.makedirs(save_dir, exist_ok=True)
@@ -196,21 +196,6 @@ def save_images_side_by_side(images, true_masks, masks_pred, epoch, save_dir='pa
         combined_image.save(os.path.join(save_dir, f'epoch_{epoch}_image_{idx}.png'))
 
     print(f"Images saved to {save_dir}")
-
-def mask_to_pil(mask):
-    if mask.ndim == 2:  #Grayscale mask
-        mask = (mask * 255).astype(np.uint8)
-        return Image.fromarray(mask, mode='L')
-    elif mask.ndim == 3:  #Multi-class mask 
-        mask_argmax = np.argmax(mask, axis=0)  #Take the channel with highest value as predicted class
-        mask_max = mask_argmax.max()
-        if mask_max != 0:
-            mask = (mask_argmax * 255 / mask_max).astype(np.uint8)
-        else:
-            mask = (mask_argmax * 255).astype(np.uint8)  #Handle case where mask_max is 0
-        return Image.fromarray(mask, mode='L')
-    else:
-        raise ValueError("Unsupported mask dimensions. Supported dimensions: 2 (single channel) or 3 (multi-channel)")
 
 def apply_color_map(mask):
     color_map = {
