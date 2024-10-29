@@ -78,8 +78,8 @@ async def handle_websocket(websocket, path, img_scale=0.5):
                 frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
                 # Resize and convert to grayscale
                 height, width = frame.shape[:2]
-                frame_resized = cv2.resize(frame, (int(width * img_scale), int(height * img_scale))) //resize the receive frames
-                frame_gray = cv2.cvtColor(frame_resized, cv2.COLOR_BGR2GRAY) //convert the 3-channel to grayscale
+                frame_resized = cv2.resize(frame, (int(width * img_scale), int(height * img_scale))) #resize the receive frames
+                frame_gray = cv2.cvtColor(frame_resized, cv2.COLOR_BGR2GRAY) #convert the 3-channel to grayscale
               
                 #Process the image
                 future = executor.submit(process_frame, frame_gray, frame)  #Pass original frame for overlay
@@ -100,7 +100,7 @@ async def handle_websocket(websocket, path, img_scale=0.5):
         print(f"Error during processing: {e}")
         await websocket.send("Error during image processing".encode())
 
-def process_frame(frame_gray, original_frame): //predict the images
+def process_frame(frame_gray, original_frame): #predict the images
     frame_tensor = transforms.ToTensor()(frame_gray).unsqueeze(0).to(device)
 
     with torch.no_grad(), torch.autocast(device.type if device.type != 'mps' else 'cpu'):
@@ -118,7 +118,7 @@ def process_frame(frame_gray, original_frame): //predict the images
 
 
 async def run_websocket():
-    start_time=time.time() //the port intended to be used (in this case "12345") must be changed
+    start_time=time.time() #the port intended to be used (in this case "12345") must be changed
       async with websockets.serve(handle_websocket, "0.0.0.0", 12345, ping_interval=60, ping_timeout=120):
         connection_time=time.time()-start_time
         print("Server started on ws://0.0.0.0:12345")
