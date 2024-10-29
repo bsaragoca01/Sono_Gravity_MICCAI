@@ -119,7 +119,7 @@ def process_frame(frame_gray, original_frame): #predict the images
 
 async def run_websocket():
     start_time=time.time() #the port intended to be used (in this case "12345") must be changed
-      async with websockets.serve(handle_websocket, "0.0.0.0", 12345, ping_interval=60, ping_timeout=120):
+    async with websockets.serve(handle_websocket, "0.0.0.0", 12345, ping_interval=60, ping_timeout=120):
         connection_time=time.time()-start_time
         print("Server started on ws://0.0.0.0:12345")
         print(f"Connection completed in {connection_time:.4f} seconds")
