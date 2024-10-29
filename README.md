@@ -49,11 +49,11 @@ or simply deleted, since DeepLabV3 Pytorch accepts data with 3-color channels by
 ### Step 3: Train
 
 Both scripts train.py inside U-Net and DeepLab folders must be used in the training process.
-Scripts have comments to guide some of the steps mentioned in this guide.
+Scripts have comments to guide some of the steps mentioned in these guidelines.
 
-The directories with the files must be introduced in the train.py scripts. Also, a directories to save the checkpoint, the worksheet with the validation metrics calculated per epoch, and the predicted images must also be introduced.
-The colors used on both the ground-truth and the predicted masks are defined in the train.py as well as on the prediction scripts. It was defined three colors for the three classes used. However, both colors and classes must be changed if the user desires or if a different number of classes will be used.
-The checkpoints saved during the training are .pth files, which contain the models' weight updates. They are saved per 5 epoch, but this can be altered in the script.
+The directories with the files must be introduced in the train.py scripts. Also, a directory to save the checkpoint, the worksheet with the validation metrics calculated per epoch, and the predicted images must also be introduced.
+The colors used on both the ground-truth and the predicted masks are defined in the train.py as well as on the prediction scripts. Three colors were defined for the three classes used. However, both colors and classes must be changed if the user desires or if a different number of classes will be used.
+The checkpoints saved during the training are .pth files, which contain the models' weight updates. They are saved per 5 epochs, but this can be altered in the script.
 
 If it is intended to be used DeepLab with ResNet-101 instead of ResNet-50 backbone, the code line:
 ```bash
@@ -84,7 +84,7 @@ python train.py --epochs 100 --batch-size 8 --amp
 ```
 ### Step 4 - Prediction:
 To Test the model trained or evaluate the Validation phase per image, the predict.py scripts must be used.
-The same adaptations performed in train.py scripts must be also used here. However, in these scripts batch size, optimizers, epoch numbers and learning rate are not needed to be adjusted since the introduced data is going to be predict per file and evaluated per file.
+The same adaptations performed in train.py scripts must be also used here. However, in these scripts batch size, optimizers, epoch numbers and learning rate are not needed to be adjusted since the introduced data is going to be predictedo per file and evaluated per file.
 
 The --load command must be used to upload the .pth file with the model's weights saved to be used in the prediction.
 
@@ -96,16 +96,16 @@ is the format that must be used.
 
 ### Step 5 - Prediction with margin:
 Considering the nature of the images used in this research, which are characterized by poor spatial resolution, a tolerance system was applied in the metrics calculation.
-In this sense, a tolerance chose by the user creates a dilated and eroded mask on top of the ground-truth mask. The metrics are calculated with the mask which showed better Dice coefficient for the specific file. 
-In the scripts evaluate_w_margin.py, the millimiters intended to be used to dilate and erode masks must specified. It also be specified the number of pixels per millimiter.
+In this sense, a tolerance chosen by the user creates a dilated and eroded mask on top of the ground-truth mask. The metrics are calculated with the mask which showed better Dice coefficient for the specific file. 
+In the scripts evaluate_w_margin.py, the millimiters intended to be used to dilate and erode masks must be specified. It also be specified the number of pixels per millimiter.
 
-The predict_w_margin.py must be used if the user want to use this tolerance. 
+The predict_w_margin.py must be used if the user wants to implement this tolerance. 
 
 In the worksheet with the calculated metrics, the files which used eroded or dilated or the original ground-truth masks are discriminated.
 ### Step 6 - Fine-Tuning:
 Fine-Tuning with data augmentation can be performed by running the fine_tuning.py script.
-In this, a set of transformations are introduced to the data.
-The following transformations are used in the script. If the user wants to introduce more transformations or modified the present ones, it must do it in this section.
+In this, a set of transformations is introduced to the data.
+The following transformations are used in the script. If the user wants to introduce more transformations or modify the present ones, must do it in this section.
 ```bash
 custom_transform = CustomCompose([
     RandomRotation(degrees=20), #range of left random rotation
