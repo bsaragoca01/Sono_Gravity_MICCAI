@@ -76,7 +76,7 @@ async def handle_websocket(websocket, path, img_scale=0.5):
                 process_time_start = time.time()
                 nparr = np.frombuffer(message, np.uint8)
                 frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-                # Resize and convert to grayscale
+                #Resize and convert to grayscale
                 height, width = frame.shape[:2]
                 frame_resized = cv2.resize(frame, (int(width * img_scale), int(height * img_scale))) #resize the receive frames
                 frame_gray = cv2.cvtColor(frame_resized, cv2.COLOR_BGR2GRAY) #convert the 3-channel to grayscale
