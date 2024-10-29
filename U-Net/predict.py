@@ -84,6 +84,7 @@ def test_model(model, device, batch_size: int = 1, amp: bool = False, img_scale:
     headers = [
         'Image', 'Validation Dice Score', 'Validation Accuracy', 'Validation Precision', 'Validation Sensitivity', 'Validation Specificity', 'Validation FPR', 'Validation FNR', 'Prediction Time'
     ]
+    ws.append(headers)
     model.eval() #used to validate
 
     with torch.no_grad(), tqdm(total=len(val_loader) * batch_size) as progress_bar:
