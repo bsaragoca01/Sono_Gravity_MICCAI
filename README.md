@@ -218,6 +218,8 @@ Finally, in the Android Studio, the Flutter code must be executed on a Windows d
 
 ### Outcome's Example:
 
+This is the outcome of running the App in the Windows desktop. The app design was made for the dissertation's purpose as well as the prediction exhibited.
+![Example](apppp1.png)
 
 
 ## References:
