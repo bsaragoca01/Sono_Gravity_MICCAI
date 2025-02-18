@@ -1,9 +1,8 @@
-# SonoGravity
+# Ultrasound-Guided Lumbar Puncture with AI-Based Image Labelling for Intracranial Pressure Assessment in Spaceflight
 
-The present repository contains frameworks to train, evaluate and predict/segment grayscale images using U-Net and DeepLabV3 Convolutional Neural Networks (CNNs). Additionally, it contains ultrasound images from a Lumbar Spinal Phantom and Dart files used to build a Flutter App. The App aims to brigde the trained models with real-time ultrasound images capture. For that, to simulate a real-time ultrasound, an java script is also available.
-The code presented in this repository was developed and used in the MSc Biomedical Engineering dissertation: "Ultrasound-Guided Lumbar Puncture with AI-Based Image Labelling for Intracranial Pressure Assessment in Spaceflight", which aimed to label Longitudinal Spinal Ultrasound images in real-time to be incorporate in a novel and safer Lumbar Puncture technique to assess the Intracranial Pressure in a microgravity environment onboard the International Space Station.
-This README provides guidance to train and predict a set of data, and use the app.
+The present repository contains frameworks to train, evaluate and predict/segment grayscale images using U-Net and DeepLabV3 Convolutional Neural Networks (CNNs). Additionally, it contains ultrasound images from a Lumbar Spinal Phantom.
 
+This README provides guidance to train and predict a set of data.
 ## How to perform the segmentation:
 
 ### Step 1: Upload Dependencies
@@ -129,109 +128,7 @@ In this Figure, the original Ultrasound image (from a phantom), respective groun
 
 ![Example of a DeepLab with ResNet-50 prediction](example_prediction.png)
 
-## How to use the App and segment images in real-time:
-In this repository, only the essential files used in the App creation are presented. Not all files that are created when a Flutter project is initiated are exhibited.
-In the folder "lib", a main.dart file and a "pages" folder can be found. The app is built in these files. 
-### Step 1: Download Flutter and Android Studio 
-Both Flutter and Android official websites must be accessed to download Flutter and Android Studio. All instructions can be found and followed in: 
-- https://flutter.dev/
-- https://developer.android.com/studio
-
-### Step2: Upload Dependencies
-
-All dependencies needed are discriminated in the pubspec.yaml file.
-To upload all dependencies in this file, in the directory of the app (where this file is incorporated), the following command must be executed:
-```build
-flutter pub get
-```
-Inside this file, if needed, dependencies must be added or deleted. 
-In the section 
-
-```build
-flutter:
-  uses-material-design: true
-
-  assets:
-    - assets/probe_butterfly.jpg
-    - assets/probe0.png
-    - assets/probe.jpg
-    - assets/logo.png
-```
-he assets **must** be modified to the images intended to be added and saved in the "assets" folder that is created when a Flutter project is initiated.
-
-## Step 3: Flutter App
-
-The main.dart file and the "pages" folder contain the crucial content of the app.
-- main.dart: Contain the App's pages definition with the: 'Home' and 'Prediction'
-- pages: contain the dart files of the two pages with explanatory comments
-
-The Home page acts as the app's cover and directs users to the Prediction page when a button is pressed. On the Prediction page, a WebSocket connection is established between the Flutter app and the server that will perform the predictions. Once the connection is established, frames displayed in real time on a Node.js server are transmitted to the app and then forwarded to the prediction server. The resulting predictions are then sent back and displayed in the app.
-
-Both the servers which are displaying the frames in real-time and predicting them must be introduced in this portion, in the predictions.dart file:
-```bash
-channel = IOWebSocketChannel.connect('ws://path_to_the_server'); //server which is displaying the Ultrasound frames in real-time
-model_channel = IOWebSocketChannel.connect('ws://path_to_server_predictions'); //server which is responsible to apply the DL models trained previously
-```
-
-### Step 4: Real-time frames display
-A Node.js environment was used to emulate the actions of an ultrasound probe. Thus, a local server was used to display frames at a real-time rate. 
-
-To download the Node.js, please consult and follow the instructions in:
-https://nodejs.org/en
-
-server.js defines the server that displays the ultrasound images in real-time. The directories to the frames, frames per second rate and a server's port **MUST** be changed.
-
-To start the server, the following command line must be executed in the directory of the server.js file:
-```bash
-node server.js
-```
-### Step 5: Predition script
-Both "predict_app_unet.py" and "predict_app_deepLab.py" scripts contain python code that allows a websocket connection between the Flutter App with the trained U-Net and DeepLab models. Thus, the frames from the Node.js environment, after received by the Flutter app, are sent to these scripts, where they are predicted, and sent back to the app to be displayed. 
-
-These files must be placed in the server where the predictions will be made. The dependecies needed in Step 1 of "How to perform the segmentation", at the beginning of these guidelines, are also essential for these two scripts functioning.
-
-The server intended to be used must be introduced here, in both predict_app_unet.py and predict_app_deepLab.py scripts:
-
-```bash
-async with websockets.serve(handle_websocket, "0.0.0.0", 12345, ping_interval=60, ping_timeout=120)
-```
-
-Moreover, the directory to the .pth file of the trained U-Net or DeepLab model must be introduced in this scripts.
-It is relevant to mentioned that the model loaded is pre-warmed before the ultrasound images from the server are sent from the App. This is performed since the first predictions take usually more time.
-So, random images with the dimensions of the frames are created and predicted by the model. Ultrasound frames also can be used for this purpose.
-
-The predict_app_unet.py and predict_app_deepLab.py must be executed in the server, depending on which model is intended to be used.
-
-### Step 6: Running everything together
-
-In the directory of the server.js file, the command:
-
-```bash
-node server.js
-```
-must be performed.
-
-Then,
-
-```bash
-nohup python predict_app_unet.py
-#or
-nohup python predict_app_deepLab.py
-```
-must be executed.
-
-Finally, in the Android Studio, the Flutter code must be executed on a Windows desktop.
-
-### Outcome's Example:
-
-This is the outcome of running the App in the Windows desktop. The app design was made for the dissertation's purpose as well as the prediction exhibited.
-![Example](apppp1.png)
-
 
 ## References:
-- "Ultrasound-Guided Lumbar Puncture with AI-Based Image Labelling for Intracranial Pressure Assessment in Spaceflight". Beatriz da Silva Pinheiro Gomes Saragoça, Edson Oliveira, Zita Martins. Master's Thesis. Instituto Superior Técnico.
 - U-Net's implementation: Ronneberger, O., Fischer, P., & Brox, T. (2015). U-net: Convolutional networks for biomedical image segmentation. Lecture Notes in Computer Science (Including Subseries Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics), 9351. https://doi.org/10.1007/978-3-319-24574-4_28
 - DeepLab's implementation: Chen, L. C., Papandreou, G., Kokkinos, I., Murphy, K., & Yuille, A. L. (2018). Rethinking Atrous Convolution for Semantic Image Segmentation Liang-Chieh. IEEE Transactions on Pattern Analysis and Machine Intelligence, 40(4).
-- Node.js: https://nodejs.org/en
-- Flutter: https://flutter.dev/
-- Android Studio: https://developer.android.com/studio
