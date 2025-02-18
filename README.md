@@ -1,6 +1,6 @@
 # Ultrasound-Guided Lumbar Puncture with AI-Based Image Labelling for Intracranial Pressure Assessment in Spaceflight
 
-The present repository contains frameworks to train, evaluate and predict/segment grayscale images using U-Net and DeepLabV3 Convolutional Neural Networks (CNNs). Additionally, it contains ultrasound images from a Lumbar Spinal Phantom.
+The present repository contains frameworks to train, evaluate and predict/segment grayscale images using U-Net and DeepLabV3 Convolutional Neural Networks (CNNs). Additionally, it contains ultrasound images from a Lumbar Spinal Phantom. The human data used in this study is not publicly available.
 
 This README provides guidance to train and predict a set of data.
 ## How to perform the segmentation:
